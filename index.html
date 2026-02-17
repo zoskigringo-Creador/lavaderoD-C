@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>D&C BAEZ AutoSpa - Sistema de Gestión</title>
+    <title>D&C BAEZ AutoSpa</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -13,62 +13,24 @@
         body { font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
         
         /* Animación de burbujas */
-        .bubbles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: rise 10s infinite ease-in;
-        }
+        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 0; overflow: hidden; top: 0; left: 0; pointer-events: none; }
+        .bubble { position: absolute; bottom: -100px; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; opacity: 0.5; animation: rise 10s infinite ease-in; }
         .bubble:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-duration: 8s; animation-delay: 0s; }
         .bubble:nth-child(2) { left: 20%; width: 40px; height: 40px; animation-duration: 5s; animation-delay: 1s; }
         .bubble:nth-child(3) { left: 35%; width: 60px; height: 60px; animation-duration: 7s; animation-delay: 2s; }
         .bubble:nth-child(4) { left: 50%; width: 90px; height: 90px; animation-duration: 11s; animation-delay: 0s; }
         .bubble:nth-child(5) { left: 65%; width: 35px; height: 35px; animation-duration: 6s; animation-delay: 1s; }
         .bubble:nth-child(6) { left: 80%; width: 50px; height: 50px; animation-duration: 8s; animation-delay: 3s; }
-        
-        @keyframes rise {
-            0% { bottom: -100px; transform: translateX(0); }
-            50% { transform: translateX(100px); }
-            100% { bottom: 1080px; transform: translateX(-200px); }
-        }
+        @keyframes rise { 0% { bottom: -100px; transform: translateX(0); } 50% { transform: translateX(100px); } 100% { bottom: 1080px; transform: translateX(-200px); } }
 
         .hidden-section { display: none !important; }
-        
-        /* Loader */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Ajustes móviles */
         .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
         
-        /* Botones táctiles */
-        button, .btn-tipo, .servicio-card, .adicional-card {
-            touch-action: manipulation;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+        button, .btn-tipo, .servicio-card, .adicional-card { touch-action: manipulation; cursor: pointer; user-select: none; -webkit-user-select: none; }
+        
+        /* Animación de carga en botón */
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #fff; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen relative overflow-x-hidden selection:bg-cyan-200 selection:text-cyan-900">
@@ -76,12 +38,11 @@
     <!-- PANTALLA DE BIENVENIDA -->
     <div id="welcomeScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-600 flex flex-col items-center justify-center text-white transition-opacity duration-500">
         <div class="bubbles">
-            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
         </div>
         
-        <div class="relative z-10 text-center p-6 animate-fade-in-up w-full max-w-md">
-            <div class="mb-8 inline-block border-4 border-white/20 p-8 shadow-2xl bg-white/5 backdrop-blur-md w-full max-w-xs mx-auto">
+        <div class="relative z-10 text-center p-6 w-full max-w-md">
+            <div class="mb-8 inline-block border-4 border-white/20 p-8 shadow-2xl bg-white/5 backdrop-blur-md w-full max-w-xs mx-auto transform transition hover:scale-105 duration-500">
                 <h1 class="text-6xl font-black tracking-tighter leading-none">
                     D&C<br>
                     <span class="text-cyan-300">BAEZ</span>
@@ -90,7 +51,7 @@
             <p class="text-lg font-light tracking-[0.2em] uppercase mb-2 opacity-90">David & Celene Baez</p>
             <h2 class="text-2xl font-bold text-cyan-200 mb-12">AUTO SPA & DETAILING</h2>
             
-            <button id="btnEnter" onclick="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
+            <button id="btnEnter" onclick="forceEnterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
                 <span id="btnEnterText" class="relative z-10 flex items-center justify-center gap-3">
                     INGRESAR
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +59,7 @@
                     </svg>
                 </span>
             </button>
-            <p class="mt-6 text-xs text-cyan-200 opacity-60">Toca para iniciar</p>
+            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 font-mono opacity-80 h-4 px-4 whitespace-normal break-words">Sistema listo para conectar</p>
         </div>
     </div>
 
@@ -108,39 +69,29 @@
         <!-- HEADER -->
         <header class="bg-blue-900 text-white shadow-xl sticky top-0 z-40 safe-pb">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <div class="border border-white/30 p-1 px-2 font-black text-base md:text-lg bg-blue-800 tracking-tighter shadow-inner">
-                        D&C
-                    </div>
+                    <div class="border border-white/30 p-1 px-2 font-black text-base md:text-lg bg-blue-800 tracking-tighter shadow-inner">D&C</div>
                     <div class="leading-tight">
                         <p class="text-[10px] md:text-xs text-blue-300 font-bold uppercase tracking-widest">Sistema</p>
                         <p class="text-xs md:text-sm font-bold text-white">BAEZ AutoSpa</p>
                     </div>
                 </div>
                 
-                <!-- Status & Nav -->
-                <div class="flex items-center gap-3">
-                    <!-- Indicador de estado -->
-                    <div id="statusIndicator" class="w-3 h-3 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(255,165,0,0.8)]" title="Conectando..."></div>
-
-                    <div class="flex gap-2 bg-blue-950/50 p-1 rounded-lg">
-                        <button onclick="switchView('ingreso')" id="btnIngreso" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2">
-                            <span class="hidden sm:inline">Ingreso</span>
-                            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                        <button onclick="switchView('admin')" id="btnAdmin" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2">
-                            <span class="hidden sm:inline">Auditoría</span>
-                            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        </button>
-                    </div>
+                <div class="flex gap-2 bg-blue-950/50 p-1 rounded-lg">
+                    <button onclick="switchView('ingreso')" id="btnIngreso" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span class="hidden sm:inline">Ingreso</span>
+                    </button>
+                    <button onclick="switchView('admin')" id="btnAdmin" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <span class="hidden sm:inline">Auditoría</span>
+                    </button>
                 </div>
             </div>
         </header>
 
         <!-- VISTA: INGRESO -->
         <div id="viewIngreso" class="max-w-4xl mx-auto p-4 pb-32 md:pb-8">
-            <!-- Toast Notificación -->
             <div id="toast" class="hidden fixed top-20 right-4 left-4 md:left-auto md:w-auto bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center justify-center md:justify-start gap-3 transform translate-y-[-150%] transition-transform duration-300 pointer-events-none">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 <span id="toastMsg" class="font-bold text-sm">Guardado correctamente</span>
@@ -153,7 +104,6 @@
                         <span class="w-1.5 h-6 bg-cyan-500 rounded-full"></span>
                         Datos del Vehículo
                     </h3>
-                    
                     <div class="space-y-4">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 tracking-wider">Número de Chapa</label>
@@ -177,18 +127,14 @@
                         <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span>
                         Servicios
                     </h3>
-                    <div id="serviciosContainer" class="space-y-2.5">
-                        <!-- JS llenará esto -->
-                    </div>
+                    <div id="serviciosContainer" class="space-y-2.5"></div>
                 </div>
             </div>
 
             <!-- ADICIONALES -->
             <div class="mt-4 md:mt-6 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6">
                 <h3 class="text-slate-400 font-bold text-xs uppercase mb-3 tracking-widest">Adicionales (Opcional)</h3>
-                <div id="adicionalesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <!-- JS llenará esto -->
-                </div>
+                <div id="adicionalesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
             </div>
 
             <!-- FOOTER FLOTANTE -->
@@ -200,7 +146,7 @@
                     </div>
                     <button onclick="guardarRegistro()" id="btnGuardar" class="flex-1 max-w-xs bg-gradient-to-r from-blue-700 to-cyan-600 hover:from-blue-800 hover:to-cyan-700 text-white py-3.5 px-6 rounded-xl font-bold shadow-lg shadow-cyan-500/20 transform active:scale-95 transition-all flex items-center justify-center gap-2">
                         <span id="btnText" class="tracking-wide text-sm md:text-base">REGISTRAR</span>
-                        <div id="btnLoader" class="loader hidden"></div>
+                        <div id="btnLoader" class="spinner hidden"></div>
                     </button>
                 </div>
             </div>
@@ -208,7 +154,6 @@
 
         <!-- VISTA: ADMIN -->
         <div id="viewAdmin" class="hidden-section max-w-7xl mx-auto p-4 pb-20">
-            <!-- Header Admin -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-black text-blue-900 tracking-tight">Panel de Control</h2>
@@ -223,77 +168,50 @@
 
                     <div class="flex gap-2">
                         <button onclick="generarDatosPrueba()" id="btnPrueba" class="flex-1 bg-slate-800 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-slate-900 flex justify-center items-center gap-2 shadow-lg active:scale-95 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                             +12 Test
                         </button>
-
                         <button onclick="exportarExcel()" class="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-emerald-700 flex justify-center items-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Excel
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabla Desktop / Cards Mobile -->
+            <!-- Tabla/Cards -->
             <div class="bg-transparent md:bg-white md:rounded-2xl md:shadow-lg md:border md:border-slate-200 overflow-hidden">
-                
-                <!-- VISTA MÓVIL (CARDS) -->
-                <div id="mobileCardsContainer" class="md:hidden space-y-3">
-                    <!-- JS llenará esto -->
-                </div>
-
-                <!-- VISTA DESKTOP (TABLA) -->
+                <div id="mobileCardsContainer" class="md:hidden space-y-3"></div>
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
-                            <tr>
-                                <th class="p-4">Hora</th>
-                                <th class="p-4">Chapa</th>
-                                <th class="p-4">Vehículo</th>
-                                <th class="p-4">Servicio</th>
-                                <th class="p-4">Insumos (Agua/Sham/Des)</th>
-                                <th class="p-4 text-right">Monto</th>
-                            </tr>
+                            <tr><th class="p-4">Hora</th><th class="p-4">Chapa</th><th class="p-4">Vehículo</th><th class="p-4">Servicio</th><th class="p-4">Insumos (Agua/Sham/Des)</th><th class="p-4 text-right">Monto</th></tr>
                         </thead>
-                        <tbody id="tablaRegistros" class="divide-y divide-slate-100 font-medium text-slate-700">
-                            <!-- JS llenará esto -->
-                        </tbody>
+                        <tbody id="tablaRegistros" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
                     </table>
                 </div>
             </div>
-            
-            <!-- Estado vacío (compartido) -->
             <div id="emptyState" class="hidden py-12 text-center">
-                <div class="bg-white p-8 rounded-2xl shadow-sm inline-block">
-                    <p class="text-slate-400 mb-2">Sin registros hoy</p>
-                    <p class="text-xs text-slate-300">Usa el botón "+12 Test" para probar</p>
-                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm inline-block"><p class="text-slate-400 mb-2">Sin registros hoy</p></div>
             </div>
-
         </div>
     </div>
 
-    <!-- LOGICA JAVASCRIPT -->
+    <!-- LOGICA -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
-        // --- CONFIG FIREBASE ---
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        // --- DATOS GLOBALES ---
-        let currentUser = null;
         let registros = [];
-        
         let tipoSeleccionado = 'Camioneta';
         let servicioSeleccionado = null;
         let adicionalesSeleccionados = [];
+        let unsubscribeSnapshot = null; 
 
         const SERVICIOS = [
             { id: 's1', nombre: 'Ducha superficial', precio: 40000 },
@@ -314,36 +232,22 @@
             'Camion': { agua: 250, shampoo: 300, desengrasante: 150 },
         };
 
-        // --- INICIALIZACIÓN ---
-        window.enterSystem = async () => {
-            // ESTRATEGIA: Entrar INMEDIATAMENTE sin esperar a Firebase
-            // Esto arregla el "bloqueo" en móviles con internet lento
-            
-            const welcome = document.getElementById('welcomeScreen');
-            const app = document.getElementById('appContainer');
-
-            // 1. Animación visual de salida (Instantánea)
-            welcome.style.opacity = '0';
-            
-            // 2. Liberar el DOM inmediatamente
-            setTimeout(() => {
-                welcome.style.display = 'none'; 
-                app.classList.remove('hidden-section');
-                
-                // Pequeño delay para fade-in suave
-                setTimeout(() => {
-                   app.classList.remove('opacity-0');
-                }, 50);
-
-                // 3. Si no estamos conectados, intentar conectar en segundo plano ahora
-                if(!auth.currentUser) {
-                    initAuth();
-                }
-            }, 500);
-        };
-
+        // --- AUTENTICACIÓN BLINDADA PARA iOS ---
         async function initAuth() {
-            updateStatus('connecting');
+            try {
+                // Paso 1: Intentar persistencia local (estándar)
+                await setPersistence(auth, browserLocalPersistence);
+            } catch (e) {
+                console.warn("Persistencia local falló (común en iOS/Iframes). Usando memoria.", e);
+                // Paso 2: Si falla (iOS), usar memoria volátil
+                try {
+                    await setPersistence(auth, inMemoryPersistence);
+                } catch(e2) {
+                    console.error("Fallo crítico de persistencia", e2);
+                }
+            }
+
+            // Paso 3: Intentar login
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -351,61 +255,90 @@
                     await signInAnonymously(auth);
                 }
             } catch (error) {
-                console.error("Auth Error:", error);
-                // Reintentar silenciosamente
-                setTimeout(() => initAuth(), 3000);
+                console.error("Auth inicial falló:", error);
+                // Mostrar error al usuario en la pantalla de carga
+                const status = document.getElementById('connectionStatus');
+                if(status) {
+                    status.innerText = "Error: " + error.code;
+                    status.classList.add('text-red-400', 'font-bold');
+                    status.classList.remove('text-cyan-200');
+                }
             }
         }
 
-        function updateStatus(status) {
-            const indicator = document.getElementById('statusIndicator');
-            if(status === 'online') {
-                indicator.className = "w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] transition-all duration-500";
-                indicator.title = "En línea";
-            } else {
-                indicator.className = "w-3 h-3 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(255,165,0,0.8)] transition-all duration-500";
-                indicator.title = "Conectando...";
+        // --- SISTEMA DE ENTRADA ---
+        window.forceEnterSystem = async () => {
+            const btn = document.getElementById('btnEnter');
+            const btnText = document.getElementById('btnEnterText');
+            const status = document.getElementById('connectionStatus');
+            
+            btn.classList.add('bg-cyan-500');
+            btnText.innerHTML = `<div class="spinner border-blue-900 border-t-transparent"></div><span class="ml-2">ACCEDIENDO...</span>`;
+            
+            // Si no hay usuario, reintentar auth agresivamente
+            if(!auth.currentUser) {
+                status.innerText = "Reconectando con el servidor...";
+                await initAuth();
             }
+
+            // Si sigue sin haber usuario tras reintento, mostrar error fatal
+            if(!auth.currentUser) {
+                 status.innerText = "Fallo de conexión. Revisa internet o recarga.";
+                 status.classList.add('text-red-400');
+                 btnText.innerHTML = "REINTENTAR";
+                 btn.classList.remove('bg-cyan-500');
+                 alert("Tu iPhone/Navegador bloqueó la conexión. Intenta recargar la página.");
+                 return;
+            }
+
+            // Éxito
+            performEntryTransition();
+        };
+
+        function performEntryTransition() {
+             const welcome = document.getElementById('welcomeScreen');
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                document.getElementById('appContainer').classList.remove('hidden-section');
+                document.getElementById('appContainer').classList.remove('opacity-0');
+            }, 500);
         }
 
-        // --- RENDERIZADO DE UI ---
+        // UI Logic
         function renderServicios() {
-            const container = document.getElementById('serviciosContainer');
-            container.innerHTML = SERVICIOS.map(s => `
+            document.getElementById('serviciosContainer').innerHTML = SERVICIOS.map(s => `
                 <div onclick="selectServicio('${s.id}')" 
-                     class="group relative p-4 rounded-xl border-2 cursor-pointer transition-all flex justify-between items-center ${servicioSeleccionado?.id === s.id ? 'border-cyan-500 bg-cyan-50 shadow-md ring-2 ring-cyan-100 ring-offset-1' : 'border-slate-100 hover:border-blue-200 hover:bg-slate-50'}"
+                     class="relative p-4 rounded-xl border-2 cursor-pointer transition-all flex justify-between items-center ${servicioSeleccionado?.id === s.id ? 'border-cyan-500 bg-cyan-50 ring-2 ring-cyan-100' : 'border-slate-100 hover:bg-slate-50'}"
                      id="serv-${s.id}">
-                    <span class="font-bold text-sm md:text-base ${servicioSeleccionado?.id === s.id ? 'text-blue-900' : 'text-slate-600'}">${s.nombre}</span>
-                    <span class="bg-white px-2 py-1 rounded-md border text-xs md:text-sm font-black text-slate-800 shadow-sm whitespace-nowrap">${s.precio.toLocaleString('es-PY')} Gs</span>
-                    ${servicioSeleccionado?.id === s.id ? '<div class="absolute -right-1 -top-1 w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>' : ''}
+                    <span class="font-bold text-sm ${servicioSeleccionado?.id === s.id ? 'text-blue-900' : 'text-slate-600'}">${s.nombre}</span>
+                    <span class="bg-white px-2 py-1 rounded border text-xs font-black text-slate-800">${s.precio.toLocaleString('es-PY')} Gs</span>
                 </div>
             `).join('');
         }
 
         function renderAdicionales() {
-            const container = document.getElementById('adicionalesContainer');
-            container.innerHTML = ADICIONALES.map(a => {
+            document.getElementById('adicionalesContainer').innerHTML = ADICIONALES.map(a => {
                 const isSelected = adicionalesSeleccionados.find(ad => ad.id === a.id);
                 return `
                 <div onclick="toggleAdicional('${a.id}')" 
-                     class="p-3 rounded-xl border cursor-pointer transition-all flex justify-between items-center ${isSelected ? 'bg-slate-800 text-white border-slate-800 shadow-lg transform scale-[1.02]' : 'border-slate-100 bg-white text-slate-500 hover:bg-slate-50'}"
+                     class="p-3 rounded-xl border cursor-pointer transition-all flex justify-between items-center ${isSelected ? 'bg-slate-800 text-white scale-[1.02]' : 'border-slate-100 bg-white text-slate-500'}"
                      id="adic-${a.id}">
-                    <span class="text-xs font-bold leading-tight">${a.nombre}</span>
-                    <span class="text-[10px] font-black opacity-80 ${isSelected ? 'text-cyan-300' : 'text-slate-400'}">+${(a.precio/1000).toFixed(0)}mil</span>
+                    <span class="text-xs font-bold">${a.nombre}</span>
+                    <span class="text-[10px] font-black ${isSelected ? 'text-cyan-300' : 'text-slate-400'}">+${(a.precio/1000).toFixed(0)}mil</span>
                 </div>
             `}).join('');
         }
 
-        // --- LÓGICA DE NEGOCIO ---
         window.selectTipo = (tipo) => {
             tipoSeleccionado = tipo;
             document.querySelectorAll('.btn-tipo').forEach(btn => {
                 if(btn.dataset.value === tipo) {
-                    btn.classList.add('border-cyan-500', 'text-cyan-600', 'bg-cyan-50', 'ring-2', 'ring-cyan-100');
-                    btn.classList.remove('border-slate-200', 'text-slate-500');
+                    btn.classList.add('border-cyan-500', 'text-cyan-600', 'bg-cyan-50', 'ring-2');
+                    btn.classList.remove('border-slate-200');
                 } else {
-                    btn.classList.remove('border-cyan-500', 'text-cyan-600', 'bg-cyan-50', 'ring-2', 'ring-cyan-100');
-                    btn.classList.add('border-slate-200', 'text-slate-500');
+                    btn.classList.remove('border-cyan-500', 'text-cyan-600', 'bg-cyan-50', 'ring-2');
+                    btn.classList.add('border-slate-200');
                 }
             });
             calculateTotal();
@@ -419,8 +352,7 @@
 
         window.toggleAdicional = (id) => {
             const item = ADICIONALES.find(a => a.id === id);
-            const exists = adicionalesSeleccionados.find(a => a.id === id);
-            if(exists) {
+            if(adicionalesSeleccionados.find(a => a.id === id)) {
                 adicionalesSeleccionados = adicionalesSeleccionados.filter(a => a.id !== id);
             } else {
                 adicionalesSeleccionados.push(item);
@@ -436,62 +368,54 @@
             return total;
         }
 
-        // --- FIREBASE OPERACIONES ---
         window.guardarRegistro = async () => {
-            // Checkeo de seguridad antes de guardar
-            if(!auth.currentUser) {
-                alert("⚠️ Conectando con el servidor... Intenta en 5 segundos.");
-                initAuth(); // Reintentar conectar forzadamente
-                return;
-            }
-
             const chapa = document.getElementById('inputChapa').value.trim();
             if(!chapa) { alert("⚠️ Faltó cargar la CHAPA"); return; }
             if(!servicioSeleccionado) { alert("⚠️ Selecciona un servicio"); return; }
             
-            // FIX MOVIL: Vibración para confirmar toque
-            if(navigator.vibrate) navigator.vibrate(50);
-            
+            if(navigator.vibrate) try { navigator.vibrate(50); } catch(e){} // Catch iOS error
             setLoading(true);
+            
             try {
-                const total = calculateTotal();
+                // Doble chequeo de auth antes de escribir
+                if(!auth.currentUser) await initAuth();
+
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), {
                     chapa: chapa.toUpperCase(),
                     tipoVehiculo: tipoSeleccionado,
                     servicioBase: servicioSeleccionado.nombre,
                     servicioBasePrecio: servicioSeleccionado.precio,
                     adicionales: adicionalesSeleccionados.map(a => a.nombre),
-                    total: total,
+                    total: calculateTotal(),
                     timestamp: serverTimestamp()
                 });
                 
                 showToast(`✅ Auto ${chapa} registrado`);
-                resetForm();
+                document.getElementById('inputChapa').value = '';
+                adicionalesSeleccionados = [];
+                selectServicio(SERVICIOS[0].id);
+                renderAdicionales();
             } catch (e) {
                 console.error(e);
-                alert("Error al guardar. Verifica tu internet.");
+                alert("Error al guardar: " + e.message);
             } finally {
                 setLoading(false);
             }
         };
 
         window.generarDatosPrueba = async () => {
-            if(!auth.currentUser) { alert("Esperando conexión..."); return; }
-            
             const btn = document.getElementById('btnPrueba');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '...';
-            btn.disabled = true;
-
-            const tipos = ['Moto', 'Auto', 'Camioneta', 'Camion'];
+            btn.innerText = '...'; btn.disabled = true;
             try {
+                if(!auth.currentUser) await initAuth();
+                
                 const batch = [];
                 for(let i=0; i<4; i++) {
                     for(let j=0; j<3; j++) {
-                        const srv = SERVICIOS[Math.floor(Math.random() * SERVICIOS.length)];
+                        const srv = SERVICIOS[Math.floor(Math.random()*SERVICIOS.length)];
                         batch.push(addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), {
                             chapa: `TEST-${Math.floor(Math.random()*900)+100}`,
-                            tipoVehiculo: tipos[i],
+                            tipoVehiculo: ['Moto','Auto','Camioneta','Camion'][i],
                             servicioBase: srv.nombre,
                             servicioBasePrecio: srv.precio,
                             adicionales: [],
@@ -502,85 +426,34 @@
                     }
                 }
                 await Promise.all(batch);
-                showToast("12 Datos generados");
-            } catch(e) {
-                alert("Error: " + e.message);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+                showToast("Datos generados");
+            } catch(e) { alert(e.message); }
+            btn.innerText = '+12 Test'; btn.disabled = false;
         };
 
-        // --- UTILIDADES ---
-        function resetForm() {
-            document.getElementById('inputChapa').value = '';
-            adicionalesSeleccionados = [];
-            selectTipo('Camioneta'); // Reset tipo
-            selectServicio(SERVICIOS[0].id); // Reset servicio
-            renderAdicionales();
-        }
-
-        function setLoading(isLoading) {
-            const btn = document.getElementById('btnGuardar');
-            const txt = document.getElementById('btnText');
-            const loader = document.getElementById('btnLoader');
-            if(isLoading) {
-                btn.disabled = true;
-                txt.classList.add('hidden');
-                loader.classList.remove('hidden');
-            } else {
-                btn.disabled = false;
-                txt.classList.remove('hidden');
-                loader.classList.add('hidden');
-            }
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.remove('hidden', 'translate-y-[-150%]');
-            setTimeout(() => t.classList.remove('translate-y-[-150%]'), 10);
-            setTimeout(() => t.classList.add('translate-y-[-150%]'), 3000);
-        }
-
-        window.switchView = (view) => {
-            const v1 = document.getElementById('viewIngreso');
-            const v2 = document.getElementById('viewAdmin');
-            const b1 = document.getElementById('btnIngreso');
-            const b2 = document.getElementById('btnAdmin');
-
-            if(view === 'ingreso') {
-                v1.classList.remove('hidden-section');
-                v2.classList.add('hidden-section');
-                b1.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2";
-                b2.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2";
-            } else {
-                v1.classList.add('hidden-section');
-                v2.classList.remove('hidden-section');
-                b2.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2";
-                b1.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2";
-            }
-        };
-
+        // --- EXPORTAR EXCEL CORREGIDO (Encoding Fix) ---
         window.exportarExcel = () => {
-            if(registros.length === 0) { alert("No hay datos"); return; }
+            if(registros.length === 0) { alert("Sin datos"); return; }
             
-            const headers = ["Fecha", "Hora", "Chapa", "Vehículo", "Servicio", "Insumos (Agua/Sham/Des)", "Total Gs"];
-            let csv = "\uFEFF" + headers.join(";") + "\n"; // BOM for Excel
+            const headers = ["Fecha", "Hora", "Chapa", "Vehículo", "Servicio", "Adicionales", "Insumos (A/S/D)", "Total Gs"];
+            let csv = "\uFEFF" + headers.join(";") + "\n"; // BOM for Excel UTF-8 force
 
             registros.forEach(r => {
                 const date = r.timestamp ? r.timestamp.toDate() : new Date();
+                const horaStr = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+                const fechaStr = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+
                 const cons = CONSUMOS[r.tipoVehiculo] || {agua:0, shampoo:0, desengrasante:0};
                 const multi = (r.servicioBase && (r.servicioBase.includes('Motor') || r.servicioBase.includes('Completo'))) ? 1.3 : 1;
-                
                 const insumosStr = `${(cons.agua*multi).toFixed(0)}L / ${(cons.shampoo*multi).toFixed(0)}ml / ${(cons.desengrasante*multi).toFixed(0)}ml`;
 
                 const row = [
-                    date.toLocaleDateString('es-PY'),
-                    date.toLocaleTimeString('es-PY'),
+                    fechaStr,
+                    horaStr,
                     r.chapa || '-',
                     r.tipoVehiculo || '-',
-                    r.servicioBase || '-',
+                    `"${r.servicioBase || '-'}"`, // Comillas para evitar rupturas
+                    `"${(r.adicionales || []).join(', ')}"`,
                     insumosStr,
                     (r.total || 0).toString()
                 ];
@@ -590,99 +463,117 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Baez_AutoSpa_Reporte_${new Date().toLocaleDateString('es-PY').replace(/\//g,'-')}.csv`;
+            link.download = `Baez_Reporte_${new Date().toISOString().slice(0,10)}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         };
 
-        // --- LISTENER EN TIEMPO REAL ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                updateStatus('online'); // Indicador verde
+        function setLoading(isLoading) {
+            const btn = document.getElementById('btnGuardar');
+            const txt = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            btn.disabled = isLoading;
+            if(isLoading) { txt.classList.add('hidden'); loader.classList.remove('hidden'); }
+            else { txt.classList.remove('hidden'); loader.classList.add('hidden'); }
+        }
 
-                // Cargar datos
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.remove('translate-y-[-150%]');
+            setTimeout(() => t.classList.add('translate-y-[-150%]'), 3000);
+        }
+
+        window.switchView = (view) => {
+            const v1 = document.getElementById('viewIngreso');
+            const v2 = document.getElementById('viewAdmin');
+            const b1 = document.getElementById('btnIngreso');
+            const b2 = document.getElementById('btnAdmin');
+            if(view === 'ingreso') {
+                v1.classList.remove('hidden-section'); v2.classList.add('hidden-section');
+                b1.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold bg-cyan-500 text-white shadow-lg flex items-center gap-2";
+                b2.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold text-blue-300 hover:text-white flex items-center gap-2";
+            } else {
+                v1.classList.add('hidden-section'); v2.classList.remove('hidden-section');
+                b2.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold bg-cyan-500 text-white shadow-lg flex items-center gap-2";
+                b1.className = "px-3 py-2 rounded-md text-xs md:text-sm font-bold text-blue-300 hover:text-white flex items-center gap-2";
+            }
+        };
+
+        // --- LISTENER SEGURO ---
+        onAuthStateChanged(auth, (user) => {
+            const status = document.getElementById('connectionStatus');
+            if (user) {
+                if(status) {
+                    status.innerText = "Conectado de forma segura.";
+                    status.classList.add('text-green-400');
+                    status.classList.remove('text-red-400', 'text-cyan-200');
+                }
+                
                 const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), orderBy('timestamp', 'desc'));
-                onSnapshot(q, (snapshot) => {
+                
+                unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
                     registros = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
                     renderData();
-                    
-                    // Actualizar total recaudado
-                    const totalDia = registros.reduce((acc, curr) => acc + (curr.total || 0), 0);
-                    document.getElementById('totalRecaudado').innerText = totalDia.toLocaleString('es-PY') + ' Gs';
+                }, (error) => {
+                    console.error("Error leyendo datos:", error);
                 });
+
+                const welcome = document.getElementById('welcomeScreen');
+                if (welcome.style.display !== 'none') {
+                    // Si ya conectó solo, mostrar botón listo para entrar
+                    const btnText = document.getElementById('btnEnterText');
+                    btnText.innerHTML = `INGRESAR`;
+                }
+
             } else {
-                updateStatus('connecting'); // Indicador naranja
+                registros = [];
+                renderData();
+                if(unsubscribeSnapshot) unsubscribeSnapshot();
             }
         });
 
         function renderData() {
-            const tableBody = document.getElementById('tablaRegistros');
-            const mobileCards = document.getElementById('mobileCardsContainer');
-            const emptyState = document.getElementById('emptyState');
+            const tBody = document.getElementById('tablaRegistros');
+            const mCards = document.getElementById('mobileCardsContainer');
+            const empty = document.getElementById('emptyState');
+            
+            if(registros.length === 0) { empty.classList.remove('hidden'); tBody.innerHTML=''; mCards.innerHTML=''; return; }
+            empty.classList.add('hidden');
 
-            if(registros.length === 0) {
-                tableBody.innerHTML = '';
-                mobileCards.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            emptyState.classList.add('hidden');
+            const totalDia = registros.reduce((acc, curr) => acc + (curr.total || 0), 0);
+            document.getElementById('totalRecaudado').innerText = totalDia.toLocaleString('es-PY') + ' Gs';
 
-            // Render Mobile Cards
-            mobileCards.innerHTML = registros.map(r => {
-                const date = r.timestamp ? r.timestamp.toDate() : new Date();
-                const cons = CONSUMOS[r.tipoVehiculo] || {agua:0, shampoo:0};
-                const multi = (r.servicioBase && (r.servicioBase.includes('Motor') || r.servicioBase.includes('Completo'))) ? 1.3 : 1;
-                
-                return `
+            mCards.innerHTML = registros.map(r => `
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex justify-between items-center">
                     <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded tracking-widest">${r.chapa}</span>
-                            <span class="text-xs font-bold text-slate-400">${r.tipoVehiculo}</span>
-                        </div>
-                        <div class="font-bold text-sm text-blue-900 leading-tight mb-1">${r.servicioBase}</div>
-                        <div class="text-[10px] text-slate-400 flex items-center gap-1">
-                            <span>${date.toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'})}</span>
-                            <span>•</span>
-                            <span class="text-cyan-600">💧${(cons.agua*multi).toFixed(0)}L</span>
-                        </div>
+                        <div class="flex items-center gap-2 mb-1"><span class="bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">${r.chapa}</span><span class="text-xs font-bold text-slate-400">${r.tipoVehiculo}</span></div>
+                        <div class="font-bold text-sm text-blue-900 leading-tight">${r.servicioBase}</div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-lg font-black text-slate-800">${(r.total || 0).toLocaleString('es-PY')}</div>
-                        <div class="text-[10px] text-slate-400 font-bold uppercase">Gs</div>
-                    </div>
+                    <div class="text-right"><div class="text-lg font-black text-slate-800">${(r.total || 0).toLocaleString('es-PY')}</div><div class="text-[10px] text-slate-400 font-bold">Gs</div></div>
                 </div>
-                `;
-            }).join('');
+            `).join('');
 
-            // Render Desktop Table
-            tableBody.innerHTML = registros.map(r => {
-                const date = r.timestamp ? r.timestamp.toDate() : new Date();
-                const cons = CONSUMOS[r.tipoVehiculo] || {agua:0, shampoo:0};
-                const multi = (r.servicioBase && (r.servicioBase.includes('Motor') || r.servicioBase.includes('Completo'))) ? 1.3 : 1;
-
-                return `
-                <tr class="hover:bg-blue-50 transition-colors border-b border-slate-100 last:border-0">
-                    <td class="p-4 text-xs text-slate-500 font-bold font-mono">${date.toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'})}</td>
-                    <td class="p-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded font-black text-xs border border-slate-200">${r.chapa}</span></td>
+            tBody.innerHTML = registros.map(r => `
+                <tr class="hover:bg-blue-50 border-b border-slate-100">
+                    <td class="p-4 text-xs font-mono text-slate-500">${r.timestamp ? r.timestamp.toDate().toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                    <td class="p-4"><span class="bg-slate-100 px-2 py-1 rounded font-bold text-xs border">${r.chapa}</span></td>
                     <td class="p-4 text-sm font-medium text-slate-600">${r.tipoVehiculo}</td>
                     <td class="p-4 text-sm text-slate-700 font-semibold">${r.servicioBase}</td>
-                    <td class="p-4 text-xs text-slate-500 font-medium font-mono">
-                        💧 ${(cons.agua*multi).toFixed(0)}L <span class="text-slate-300 mx-1">|</span> 🧼 ${(cons.shampoo*multi).toFixed(0)}ml
-                    </td>
-                    <td class="p-4 text-right font-black text-slate-800 tracking-tight">${(r.total || 0).toLocaleString('es-PY')} Gs</td>
+                    <td class="p-4 text-xs text-slate-400">Calculado en Excel</td>
+                    <td class="p-4 text-right font-black text-slate-800">${(r.total || 0).toLocaleString('es-PY')} Gs</td>
                 </tr>
-            `}).join('');
+            `).join('');
         }
 
         // Init
-        // Intentar conectar en segundo plano inmediatamente, pero no bloquear la interfaz
-        initAuth();
-        selectServicio(SERVICIOS[0].id); // Default select
+        selectServicio(SERVICIOS[0].id);
         renderAdicionales();
+        
+        // Iniciamos la autenticación inmediatamente
+        initAuth();
+
     </script>
 </body>
 </html>
