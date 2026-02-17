@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
         
         /* Animación de burbujas para el fondo */
         .bubbles {
@@ -66,13 +66,15 @@
         button, .btn-tipo, .servicio-card, .adicional-card {
             touch-action: manipulation;
             cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen relative overflow-x-hidden selection:bg-cyan-200 selection:text-cyan-900">
 
     <!-- PANTALLA DE BIENVENIDA -->
-    <div id="welcomeScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-600 flex flex-col items-center justify-center text-white transition-transform duration-700">
+    <div id="welcomeScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-600 flex flex-col items-center justify-center text-white transition-opacity duration-500">
         <div class="bubbles">
             <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
             <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
@@ -88,15 +90,15 @@
             <p class="text-lg font-light tracking-[0.2em] uppercase mb-2 opacity-90">David & Celene Baez</p>
             <h2 class="text-2xl font-bold text-cyan-200 mb-12">AUTO SPA & DETAILING</h2>
             
-            <button onclick="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
-                <span class="relative z-10 flex items-center justify-center gap-3">
+            <button id="btnEnter" onclick="enterSystem()" ontouchstart="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
+                <span id="btnEnterText" class="relative z-10 flex items-center justify-center gap-3">
                     INGRESAR
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                 </span>
             </button>
-            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 animate-pulse font-mono">Estableciendo conexión segura...</p>
+            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 animate-pulse font-mono h-4">Iniciando sistema...</p>
         </div>
     </div>
 
@@ -283,6 +285,8 @@
         // --- DATOS GLOBALES ---
         let currentUser = null;
         let registros = [];
+        let autoEnterRequested = false; // Bandera para entrada automática
+        
         let tipoSeleccionado = 'Camioneta';
         let servicioSeleccionado = null;
         let adicionalesSeleccionados = [];
@@ -307,20 +311,50 @@
         };
 
         // --- INICIALIZACIÓN ---
-        window.enterSystem = () => {
-            if(!currentUser) {
-                alert("⏳ Conectando... espera 3 segundos e intenta de nuevo.");
+        window.enterSystem = async () => {
+            const btn = document.getElementById('btnEnter');
+            const btnText = document.getElementById('btnEnterText');
+            
+            // Si ya estamos conectados, entrar directo
+            if(currentUser) {
+                performEntryAnimation();
                 return;
             }
-            const welcome = document.getElementById('welcomeScreen');
-            welcome.style.transform = 'translateY(-100%)';
-            // FIX MOVIL: Esperar transición y eliminar del DOM para que no bloquee clicks
-            setTimeout(() => {
-                welcome.style.display = 'none';
-                document.getElementById('appContainer').classList.remove('hidden-section');
-                document.getElementById('appContainer').classList.remove('opacity-0');
-            }, 500);
+
+            // Si no, mostrar estado de carga y esperar/reintentar
+            btnText.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-blue-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>INICIANDO...</span>
+            `;
+            
+            autoEnterRequested = true;
+            
+            // INTENTO FORZADO DE CONEXIÓN si no responde rápido
+            if(!auth.currentUser) {
+                try {
+                    await signInAnonymously(auth);
+                } catch(e) {
+                    console.error("Reintento fallido", e);
+                    // Si falla, el listener no se disparará, así que mostramos error en el botón
+                    btnText.innerHTML = "REINTENTAR";
+                    alert("Error de conexión. Toca de nuevo para reintentar.");
+                }
+            }
         };
+
+        function performEntryAnimation() {
+            const welcome = document.getElementById('welcomeScreen');
+            welcome.style.opacity = '0';
+            // Esperar animación y ELIMINAR del DOM para liberar el touch en móvil
+            setTimeout(() => {
+                welcome.style.display = 'none'; 
+                document.getElementById('appContainer').classList.remove('hidden-section');
+                setTimeout(() => document.getElementById('appContainer').classList.remove('opacity-0'), 50);
+            }, 500);
+        }
 
         async function initAuth() {
             try {
@@ -331,8 +365,9 @@
                 }
             } catch (error) {
                 console.error("Auth Error:", error);
-                document.getElementById('connectionStatus').innerText = "Error: Recarga la página";
-                document.getElementById('connectionStatus').classList.add('text-red-400');
+                document.getElementById('connectionStatus').innerText = "Reintentando conexión...";
+                // Reintentar anónimo si falla el token
+                try { await signInAnonymously(auth); } catch(e){}
             }
         }
 
@@ -430,7 +465,7 @@
                 resetForm();
             } catch (e) {
                 console.error(e);
-                alert("Error al guardar: " + e.message);
+                alert("Error al guardar. Verifica tu internet.");
             } finally {
                 setLoading(false);
             }
@@ -559,9 +594,14 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('connectionStatus').innerText = "Conectado y seguro";
+                document.getElementById('connectionStatus').innerText = "Sistema Listo";
                 document.getElementById('connectionStatus').classList.remove('animate-pulse');
                 
+                // Si el usuario ya había intentado entrar, hacerlo pasar automáticamente
+                if(autoEnterRequested) {
+                    performEntryAnimation();
+                }
+
                 // Cargar datos
                 const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), orderBy('timestamp', 'desc'));
                 onSnapshot(q, (snapshot) => {
