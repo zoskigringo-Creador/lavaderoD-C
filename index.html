@@ -34,12 +34,52 @@
             background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
             background-size: 20px 20px;
         }
+
+        /* Animación de burbujas para el welcome screen */
+        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 0; overflow: hidden; top: 0; left: 0; pointer-events: none; }
+        .bubble { position: absolute; bottom: -100px; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; opacity: 0.5; animation: rise 10s infinite ease-in; }
+        .bubble:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-duration: 8s; animation-delay: 0s; }
+        .bubble:nth-child(2) { left: 20%; width: 40px; height: 40px; animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { left: 35%; width: 60px; height: 60px; animation-duration: 7s; animation-delay: 2s; }
+        .bubble:nth-child(4) { left: 50%; width: 90px; height: 90px; animation-duration: 11s; animation-delay: 0s; }
+        .bubble:nth-child(5) { left: 65%; width: 35px; height: 35px; animation-duration: 6s; animation-delay: 1s; }
+        .bubble:nth-child(6) { left: 80%; width: 50px; height: 50px; animation-duration: 8s; animation-delay: 3s; }
+        @keyframes rise { 0% { bottom: -100px; transform: translateX(0); } 50% { transform: translateX(100px); } 100% { bottom: 1080px; transform: translateX(-200px); } }
     </style>
 </head>
 <body class="bg-bubbles min-h-screen relative overflow-x-hidden selection:bg-cyan-200 selection:text-cyan-900">
 
-    <!-- APP PRINCIPAL (Directo, sin pantalla de bienvenida) -->
-    <div id="appContainer" class="opacity-100 transition-opacity duration-700">
+    <!-- PANTALLA DE BIENVENIDA -->
+    <div id="welcomeScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-600 flex flex-col items-center justify-center text-white transition-transform duration-700">
+        <div class="bubbles">
+            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        </div>
+        
+        <div class="relative z-10 text-center p-6 w-full max-w-md animate-fade-in-up">
+            <div class="mb-8 inline-block border-4 border-white/20 p-8 shadow-2xl bg-white/5 backdrop-blur-md w-full max-w-xs mx-auto transform transition hover:scale-105 duration-500">
+                <h1 class="text-6xl font-black tracking-tighter leading-none">
+                    D&C<br>
+                    <span class="text-cyan-300">BAEZ</span>
+                </h1>
+            </div>
+            <!-- CORRECCIÓN DE NOMBRE -->
+            <p class="text-lg font-light tracking-[0.2em] uppercase mb-2 opacity-90">David & Selene Baez</p>
+            <h2 class="text-2xl font-bold text-cyan-200 mb-12">AUTO SPA & DETAILING</h2>
+            
+            <button onclick="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
+                <span class="relative z-10 flex items-center justify-center gap-3">
+                    INGRESAR
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </span>
+            </button>
+            <p class="mt-6 text-xs text-cyan-200 font-mono opacity-80 h-4">Sistema Local v1.0</p>
+        </div>
+    </div>
+
+    <!-- APP PRINCIPAL (Oculta inicialmente) -->
+    <div id="appContainer" class="hidden-section opacity-0 transition-opacity duration-700">
         
         <!-- HEADER -->
         <header class="bg-blue-900 text-white shadow-xl sticky top-0 z-40 safe-pb">
@@ -221,6 +261,18 @@
             localStorage.setItem('baez_registros_v1', JSON.stringify(registros));
             renderData();
         }
+
+        // --- TRANSICIÓN BIENVENIDA ---
+        window.enterSystem = () => {
+            const welcome = document.getElementById('welcomeScreen');
+            welcome.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                const app = document.getElementById('appContainer');
+                app.classList.remove('hidden-section');
+                app.classList.remove('opacity-0');
+            }, 500);
+        };
 
         // --- UI RENDERING ---
         function renderServicios() {
