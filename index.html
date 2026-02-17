@@ -12,17 +12,6 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
         
-        /* Animación de burbujas */
-        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 0; overflow: hidden; top: 0; left: 0; pointer-events: none; }
-        .bubble { position: absolute; bottom: -100px; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; opacity: 0.5; animation: rise 10s infinite ease-in; }
-        .bubble:nth-child(1) { left: 10%; width: 80px; height: 80px; animation-duration: 8s; animation-delay: 0s; }
-        .bubble:nth-child(2) { left: 20%; width: 40px; height: 40px; animation-duration: 5s; animation-delay: 1s; }
-        .bubble:nth-child(3) { left: 35%; width: 60px; height: 60px; animation-duration: 7s; animation-delay: 2s; }
-        .bubble:nth-child(4) { left: 50%; width: 90px; height: 90px; animation-duration: 11s; animation-delay: 0s; }
-        .bubble:nth-child(5) { left: 65%; width: 35px; height: 35px; animation-duration: 6s; animation-delay: 1s; }
-        .bubble:nth-child(6) { left: 80%; width: 50px; height: 50px; animation-duration: 8s; animation-delay: 3s; }
-        @keyframes rise { 0% { bottom: -100px; transform: translateX(0); } 50% { transform: translateX(100px); } 100% { bottom: 1080px; transform: translateX(-200px); } }
-
         .hidden-section { display: none !important; }
         .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
         
@@ -38,40 +27,19 @@
         /* Animación de carga */
         .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #fff; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Estilo para las burbujas sutiles en el fondo del app */
+        .bg-bubbles {
+            background-color: #f1f5f9;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen relative overflow-x-hidden selection:bg-cyan-200 selection:text-cyan-900">
+<body class="bg-bubbles min-h-screen relative overflow-x-hidden selection:bg-cyan-200 selection:text-cyan-900">
 
-    <!-- PANTALLA DE BIENVENIDA -->
-    <div id="welcomeScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-600 flex flex-col items-center justify-center text-white transition-opacity duration-500">
-        <div class="bubbles">
-            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-        </div>
-        
-        <div class="relative z-10 text-center p-6 w-full max-w-md">
-            <div class="mb-8 inline-block border-4 border-white/20 p-8 shadow-2xl bg-white/5 backdrop-blur-md w-full max-w-xs mx-auto transform transition hover:scale-105 duration-500">
-                <h1 class="text-6xl font-black tracking-tighter leading-none">
-                    D&C<br>
-                    <span class="text-cyan-300">BAEZ</span>
-                </h1>
-            </div>
-            <p class="text-lg font-light tracking-[0.2em] uppercase mb-2 opacity-90">David & Celene Baez</p>
-            <h2 class="text-2xl font-bold text-cyan-200 mb-12">AUTO SPA & DETAILING</h2>
-            
-            <button id="btnEnter" onclick="forceEnterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
-                <span id="btnEnterText" class="relative z-10 flex items-center justify-center gap-3">
-                    INGRESAR
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                </span>
-            </button>
-            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 font-mono opacity-80 h-4 px-4 whitespace-normal break-words">Toca para conectar</p>
-        </div>
-    </div>
-
-    <!-- APP PRINCIPAL -->
-    <div id="appContainer" class="hidden-section opacity-0 transition-opacity duration-700">
+    <!-- APP PRINCIPAL (Directo, sin pantalla de bienvenida) -->
+    <div id="appContainer" class="opacity-100 transition-opacity duration-700">
         
         <!-- HEADER -->
         <header class="bg-blue-900 text-white shadow-xl sticky top-0 z-40 safe-pb">
@@ -98,7 +66,8 @@
         </header>
 
         <!-- VISTA: INGRESO -->
-        <div id="viewIngreso" class="max-w-4xl mx-auto p-4 pb-32 md:pb-8">
+        <div id="viewIngreso" class="max-w-4xl mx-auto p-4 pb-32 md:pb-8 animate-fade-in">
+            <!-- Toast Notificación -->
             <div id="toast" class="hidden fixed top-20 right-4 left-4 md:left-auto md:w-auto bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center justify-center md:justify-start gap-3 transform translate-y-[-150%] transition-transform duration-300 pointer-events-none">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 <span id="toastMsg" class="font-bold text-sm">Guardado correctamente</span>
@@ -160,11 +129,11 @@
         </div>
 
         <!-- VISTA: ADMIN -->
-        <div id="viewAdmin" class="hidden-section max-w-7xl mx-auto p-4 pb-20">
+        <div id="viewAdmin" class="hidden-section max-w-7xl mx-auto p-4 pb-20 animate-fade-in">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-black text-blue-900 tracking-tight">Panel de Control</h2>
-                    <p class="text-sm text-slate-500 font-medium">Auditoría en tiempo real</p>
+                    <p class="text-sm text-slate-500 font-medium">Datos en Memoria Local</p>
                 </div>
                 
                 <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
@@ -179,6 +148,9 @@
                         </button>
                         <button onclick="exportarExcel()" class="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-emerald-700 flex justify-center items-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">
                             Excel
+                        </button>
+                        <button onclick="borrarDatos()" class="bg-red-100 text-red-600 px-3 py-2 rounded-xl font-bold text-xs hover:bg-red-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>
                 </div>
@@ -202,23 +174,13 @@
         </div>
     </div>
 
-    <!-- LOGICA -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
+    <!-- LOGICA PURA LOCAL (NO FIREBASE) -->
+    <script>
+        // --- CONFIGURACIÓN DE DATOS ---
         let registros = [];
         let tipoSeleccionado = 'Camioneta';
         let servicioSeleccionado = null;
         let adicionalesSeleccionados = [];
-        let unsubscribeSnapshot = null; 
 
         const SERVICIOS = [
             { id: 's1', nombre: 'Ducha superficial', precio: 40000 },
@@ -239,53 +201,28 @@
             'Camion': { agua: 250, shampoo: 300, desengrasante: 150 },
         };
 
-        // --- SISTEMA DE ENTRADA MANUAL FORZADA ---
-        window.forceEnterSystem = async () => {
-            const btn = document.getElementById('btnEnter');
-            const btnText = document.getElementById('btnEnterText');
-            const status = document.getElementById('connectionStatus');
-            
-            // 1. Feedback visual inmediato
-            btn.classList.add('bg-cyan-500');
-            btnText.innerHTML = `<div class="spinner border-blue-900 border-t-transparent"></div><span class="ml-2">CONECTANDO...</span>`;
-            status.innerText = "Negociando conexión segura...";
-            
-            // 2. Comprobar si ya estamos conectados
-            if(auth.currentUser) {
-                performEntryTransition();
-                return;
+        // --- SISTEMA DE ALMACENAMIENTO LOCAL ---
+        function cargarDatosLocales() {
+            const guardado = localStorage.getItem('baez_registros_v1');
+            if(guardado) {
+                registros = JSON.parse(guardado);
+                // Convertir strings de fecha back a objetos Date
+                registros = registros.map(r => ({
+                    ...r,
+                    fechaObj: new Date(r.fechaIso)
+                }));
+                // Ordenar por más reciente
+                registros.sort((a,b) => b.fechaObj - a.fechaObj);
             }
-
-            // 3. INTENTO AGRESIVO DE CONEXIÓN
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                // Si pasa aquí, es que conectó
-                performEntryTransition();
-            } catch (error) {
-                console.error("Error Auth:", error);
-                status.innerText = "Error: " + error.code;
-                status.classList.add('text-red-400');
-                btnText.innerHTML = "REINTENTAR";
-                btn.classList.remove('bg-cyan-500');
-                alert("No se pudo conectar: " + error.message);
-            }
-        };
-
-        function performEntryTransition() {
-             const welcome = document.getElementById('welcomeScreen');
-            welcome.style.opacity = '0';
-            setTimeout(() => {
-                welcome.style.display = 'none';
-                document.getElementById('appContainer').classList.remove('hidden-section');
-                document.getElementById('appContainer').classList.remove('opacity-0');
-            }, 500);
+            renderData();
         }
 
-        // UI Logic
+        function guardarDatosLocales() {
+            localStorage.setItem('baez_registros_v1', JSON.stringify(registros));
+            renderData();
+        }
+
+        // --- UI RENDERING ---
         function renderServicios() {
             document.getElementById('serviciosContainer').innerHTML = SERVICIOS.map(s => `
                 <div onclick="selectServicio('${s.id}')" 
@@ -348,69 +285,72 @@
             return total;
         }
 
+        // --- OPERACIONES ---
         window.guardarRegistro = async () => {
             const chapa = document.getElementById('inputChapa').value.trim();
             if(!chapa) { alert("⚠️ Faltó cargar la CHAPA"); return; }
             if(!servicioSeleccionado) { alert("⚠️ Selecciona un servicio"); return; }
             
+            // Vibración simple
             if(navigator.vibrate) try { navigator.vibrate(50); } catch(e){}
+            
             setLoading(true);
             
-            try {
-                if(!auth.currentUser) throw new Error("No hay conexión.");
-
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), {
+            // Simular carga rápida (UX)
+            setTimeout(() => {
+                const nuevoRegistro = {
+                    id: Date.now(),
                     chapa: chapa.toUpperCase(),
                     tipoVehiculo: tipoSeleccionado,
                     servicioBase: servicioSeleccionado.nombre,
-                    servicioBasePrecio: servicioSeleccionado.precio,
                     adicionales: adicionalesSeleccionados.map(a => a.nombre),
                     total: calculateTotal(),
-                    timestamp: serverTimestamp()
-                });
+                    fechaIso: new Date().toISOString(),
+                    fechaObj: new Date()
+                };
+
+                registros.unshift(nuevoRegistro); // Agregar al inicio
+                guardarDatosLocales();
                 
                 showToast(`✅ Auto ${chapa} registrado`);
-                document.getElementById('inputChapa').value = '';
-                adicionalesSeleccionados = [];
-                selectServicio(SERVICIOS[0].id);
-                renderAdicionales();
-            } catch (e) {
-                console.error(e);
-                alert("Error al guardar: " + e.message);
-            } finally {
+                resetForm();
                 setLoading(false);
+            }, 300);
+        };
+
+        window.generarDatosPrueba = () => {
+            const batch = [];
+            for(let i=0; i<4; i++) {
+                for(let j=0; j<3; j++) {
+                    const srv = SERVICIOS[Math.floor(Math.random()*SERVICIOS.length)];
+                    const fechaSimulada = new Date();
+                    fechaSimulada.setMinutes(fechaSimulada.getMinutes() - (i*20 + j*5));
+                    
+                    batch.push({
+                        id: Date.now() + Math.random(),
+                        chapa: `TEST-${Math.floor(Math.random()*900)+100}`,
+                        tipoVehiculo: ['Moto','Auto','Camioneta','Camion'][i],
+                        servicioBase: srv.nombre,
+                        adicionales: [],
+                        total: srv.precio,
+                        fechaIso: fechaSimulada.toISOString(),
+                        fechaObj: fechaSimulada
+                    });
+                }
+            }
+            registros = [...batch, ...registros];
+            registros.sort((a,b) => b.fechaObj - a.fechaObj);
+            guardarDatosLocales();
+            showToast("12 Datos generados");
+        };
+
+        window.borrarDatos = () => {
+            if(confirm("¿Borrar todos los datos locales?")) {
+                registros = [];
+                guardarDatosLocales();
             }
         };
 
-        window.generarDatosPrueba = async () => {
-            const btn = document.getElementById('btnPrueba');
-            btn.innerText = '...'; btn.disabled = true;
-            try {
-                if(!auth.currentUser) throw new Error("No hay conexión.");
-                
-                const batch = [];
-                for(let i=0; i<4; i++) {
-                    for(let j=0; j<3; j++) {
-                        const srv = SERVICIOS[Math.floor(Math.random()*SERVICIOS.length)];
-                        batch.push(addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), {
-                            chapa: `TEST-${Math.floor(Math.random()*900)+100}`,
-                            tipoVehiculo: ['Moto','Auto','Camioneta','Camion'][i],
-                            servicioBase: srv.nombre,
-                            servicioBasePrecio: srv.precio,
-                            adicionales: [],
-                            total: srv.precio,
-                            timestamp: serverTimestamp(),
-                            esPrueba: true
-                        }));
-                    }
-                }
-                await Promise.all(batch);
-                showToast("Datos generados");
-            } catch(e) { alert(e.message); }
-            btn.innerText = '+12 Test'; btn.disabled = false;
-        };
-
-        // --- EXPORTAR EXCEL CORREGIDO (Encoding Fix) ---
         window.exportarExcel = () => {
             if(registros.length === 0) { alert("Sin datos"); return; }
             
@@ -418,7 +358,7 @@
             let csv = "\uFEFF" + headers.join(";") + "\n"; 
 
             registros.forEach(r => {
-                const date = r.timestamp ? r.timestamp.toDate() : new Date();
+                const date = r.fechaObj;
                 const horaStr = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
                 const fechaStr = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
 
@@ -442,11 +382,19 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Baez_Reporte_${new Date().toISOString().slice(0,10)}.csv`;
+            link.download = `Baez_Reporte_Local_${new Date().toISOString().slice(0,10)}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         };
+
+        // --- UTILIDADES ---
+        function resetForm() {
+            document.getElementById('inputChapa').value = '';
+            adicionalesSeleccionados = [];
+            selectServicio(SERVICIOS[0].id);
+            renderAdicionales();
+        }
 
         function setLoading(isLoading) {
             const btn = document.getElementById('btnGuardar');
@@ -480,38 +428,6 @@
             }
         };
 
-        // --- LISTENER SEGURO ---
-        onAuthStateChanged(auth, (user) => {
-            const status = document.getElementById('connectionStatus');
-            if (user) {
-                if(status) {
-                    status.innerText = "Conectado. Bienvenido.";
-                    status.classList.add('text-green-400');
-                    status.classList.remove('text-cyan-200');
-                }
-                
-                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), orderBy('timestamp', 'desc'));
-                
-                unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
-                    registros = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                    renderData();
-                }, (error) => {
-                    console.error("Error leyendo datos:", error);
-                });
-
-                // Si detectamos conexión y aún estamos en la pantalla de bienvenida, actualizamos el texto
-                const welcome = document.getElementById('welcomeScreen');
-                if (welcome.style.display !== 'none') {
-                    document.getElementById('btnEnterText').innerText = "ENTRAR AHORA";
-                }
-
-            } else {
-                registros = [];
-                renderData();
-                if(unsubscribeSnapshot) unsubscribeSnapshot();
-            }
-        });
-
         function renderData() {
             const tBody = document.getElementById('tablaRegistros');
             const mCards = document.getElementById('mobileCardsContainer');
@@ -535,7 +451,7 @@
 
             tBody.innerHTML = registros.map(r => `
                 <tr class="hover:bg-blue-50 border-b border-slate-100">
-                    <td class="p-4 text-xs font-mono text-slate-500">${r.timestamp ? r.timestamp.toDate().toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                    <td class="p-4 text-xs font-mono text-slate-500">${r.fechaObj.toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'})}</td>
                     <td class="p-4"><span class="bg-slate-100 px-2 py-1 rounded font-bold text-xs border">${r.chapa}</span></td>
                     <td class="p-4 text-sm font-medium text-slate-600">${r.tipoVehiculo}</td>
                     <td class="p-4 text-sm text-slate-700 font-semibold">${r.servicioBase}</td>
@@ -545,19 +461,10 @@
             `).join('');
         }
 
-        // Init
+        // --- INICIO ---
         selectServicio(SERVICIOS[0].id);
         renderAdicionales();
-        
-        // Intento de conexión silenciosa al cargar
-        // Si falla, el usuario usará el botón manual
-        try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                signInWithCustomToken(auth, __initial_auth_token).catch(e => console.log("Auth token silent fail"));
-            } else {
-                signInAnonymously(auth).catch(e => console.log("Auth anon silent fail"));
-            }
-        } catch(e) {}
+        cargarDatosLocales();
 
     </script>
 </body>
