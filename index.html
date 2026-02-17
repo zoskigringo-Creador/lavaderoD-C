@@ -26,9 +26,16 @@
         .hidden-section { display: none !important; }
         .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
         
-        button, .btn-tipo, .servicio-card, .adicional-card { touch-action: manipulation; cursor: pointer; user-select: none; -webkit-user-select: none; }
+        /* Asegurar que los botones sean fáciles de tocar */
+        button, .btn-tipo, .servicio-card, .adicional-card { 
+            touch-action: manipulation; 
+            cursor: pointer; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
         
-        /* Animación de carga en botón */
+        /* Animación de carga */
         .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #fff; width: 20px; height: 20px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -59,7 +66,7 @@
                     </svg>
                 </span>
             </button>
-            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 font-mono opacity-80 h-4 px-4 whitespace-normal break-words">Sistema listo para conectar</p>
+            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 font-mono opacity-80 h-4 px-4 whitespace-normal break-words">Toca para conectar</p>
         </div>
     </div>
 
@@ -199,7 +206,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence, inMemoryPersistence } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
@@ -232,67 +239,40 @@
             'Camion': { agua: 250, shampoo: 300, desengrasante: 150 },
         };
 
-        // --- AUTENTICACIÓN BLINDADA PARA iOS ---
-        async function initAuth() {
-            try {
-                // Paso 1: Intentar persistencia local (estándar)
-                await setPersistence(auth, browserLocalPersistence);
-            } catch (e) {
-                console.warn("Persistencia local falló (común en iOS/Iframes). Usando memoria.", e);
-                // Paso 2: Si falla (iOS), usar memoria volátil
-                try {
-                    await setPersistence(auth, inMemoryPersistence);
-                } catch(e2) {
-                    console.error("Fallo crítico de persistencia", e2);
-                }
+        // --- SISTEMA DE ENTRADA MANUAL FORZADA ---
+        window.forceEnterSystem = async () => {
+            const btn = document.getElementById('btnEnter');
+            const btnText = document.getElementById('btnEnterText');
+            const status = document.getElementById('connectionStatus');
+            
+            // 1. Feedback visual inmediato
+            btn.classList.add('bg-cyan-500');
+            btnText.innerHTML = `<div class="spinner border-blue-900 border-t-transparent"></div><span class="ml-2">CONECTANDO...</span>`;
+            status.innerText = "Negociando conexión segura...";
+            
+            // 2. Comprobar si ya estamos conectados
+            if(auth.currentUser) {
+                performEntryTransition();
+                return;
             }
 
-            // Paso 3: Intentar login
+            // 3. INTENTO AGRESIVO DE CONEXIÓN
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
+                // Si pasa aquí, es que conectó
+                performEntryTransition();
             } catch (error) {
-                console.error("Auth inicial falló:", error);
-                // Mostrar error al usuario en la pantalla de carga
-                const status = document.getElementById('connectionStatus');
-                if(status) {
-                    status.innerText = "Error: " + error.code;
-                    status.classList.add('text-red-400', 'font-bold');
-                    status.classList.remove('text-cyan-200');
-                }
+                console.error("Error Auth:", error);
+                status.innerText = "Error: " + error.code;
+                status.classList.add('text-red-400');
+                btnText.innerHTML = "REINTENTAR";
+                btn.classList.remove('bg-cyan-500');
+                alert("No se pudo conectar: " + error.message);
             }
-        }
-
-        // --- SISTEMA DE ENTRADA ---
-        window.forceEnterSystem = async () => {
-            const btn = document.getElementById('btnEnter');
-            const btnText = document.getElementById('btnEnterText');
-            const status = document.getElementById('connectionStatus');
-            
-            btn.classList.add('bg-cyan-500');
-            btnText.innerHTML = `<div class="spinner border-blue-900 border-t-transparent"></div><span class="ml-2">ACCEDIENDO...</span>`;
-            
-            // Si no hay usuario, reintentar auth agresivamente
-            if(!auth.currentUser) {
-                status.innerText = "Reconectando con el servidor...";
-                await initAuth();
-            }
-
-            // Si sigue sin haber usuario tras reintento, mostrar error fatal
-            if(!auth.currentUser) {
-                 status.innerText = "Fallo de conexión. Revisa internet o recarga.";
-                 status.classList.add('text-red-400');
-                 btnText.innerHTML = "REINTENTAR";
-                 btn.classList.remove('bg-cyan-500');
-                 alert("Tu iPhone/Navegador bloqueó la conexión. Intenta recargar la página.");
-                 return;
-            }
-
-            // Éxito
-            performEntryTransition();
         };
 
         function performEntryTransition() {
@@ -373,12 +353,11 @@
             if(!chapa) { alert("⚠️ Faltó cargar la CHAPA"); return; }
             if(!servicioSeleccionado) { alert("⚠️ Selecciona un servicio"); return; }
             
-            if(navigator.vibrate) try { navigator.vibrate(50); } catch(e){} // Catch iOS error
+            if(navigator.vibrate) try { navigator.vibrate(50); } catch(e){}
             setLoading(true);
             
             try {
-                // Doble chequeo de auth antes de escribir
-                if(!auth.currentUser) await initAuth();
+                if(!auth.currentUser) throw new Error("No hay conexión.");
 
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), {
                     chapa: chapa.toUpperCase(),
@@ -407,7 +386,7 @@
             const btn = document.getElementById('btnPrueba');
             btn.innerText = '...'; btn.disabled = true;
             try {
-                if(!auth.currentUser) await initAuth();
+                if(!auth.currentUser) throw new Error("No hay conexión.");
                 
                 const batch = [];
                 for(let i=0; i<4; i++) {
@@ -436,7 +415,7 @@
             if(registros.length === 0) { alert("Sin datos"); return; }
             
             const headers = ["Fecha", "Hora", "Chapa", "Vehículo", "Servicio", "Adicionales", "Insumos (A/S/D)", "Total Gs"];
-            let csv = "\uFEFF" + headers.join(";") + "\n"; // BOM for Excel UTF-8 force
+            let csv = "\uFEFF" + headers.join(";") + "\n"; 
 
             registros.forEach(r => {
                 const date = r.timestamp ? r.timestamp.toDate() : new Date();
@@ -452,7 +431,7 @@
                     horaStr,
                     r.chapa || '-',
                     r.tipoVehiculo || '-',
-                    `"${r.servicioBase || '-'}"`, // Comillas para evitar rupturas
+                    `"${r.servicioBase || '-'}"`,
                     `"${(r.adicionales || []).join(', ')}"`,
                     insumosStr,
                     (r.total || 0).toString()
@@ -506,9 +485,9 @@
             const status = document.getElementById('connectionStatus');
             if (user) {
                 if(status) {
-                    status.innerText = "Conectado de forma segura.";
+                    status.innerText = "Conectado. Bienvenido.";
                     status.classList.add('text-green-400');
-                    status.classList.remove('text-red-400', 'text-cyan-200');
+                    status.classList.remove('text-cyan-200');
                 }
                 
                 const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), orderBy('timestamp', 'desc'));
@@ -520,11 +499,10 @@
                     console.error("Error leyendo datos:", error);
                 });
 
+                // Si detectamos conexión y aún estamos en la pantalla de bienvenida, actualizamos el texto
                 const welcome = document.getElementById('welcomeScreen');
                 if (welcome.style.display !== 'none') {
-                    // Si ya conectó solo, mostrar botón listo para entrar
-                    const btnText = document.getElementById('btnEnterText');
-                    btnText.innerHTML = `INGRESAR`;
+                    document.getElementById('btnEnterText').innerText = "ENTRAR AHORA";
                 }
 
             } else {
@@ -571,8 +549,15 @@
         selectServicio(SERVICIOS[0].id);
         renderAdicionales();
         
-        // Iniciamos la autenticación inmediatamente
-        initAuth();
+        // Intento de conexión silenciosa al cargar
+        // Si falla, el usuario usará el botón manual
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                signInWithCustomToken(auth, __initial_auth_token).catch(e => console.log("Auth token silent fail"));
+            } else {
+                signInAnonymously(auth).catch(e => console.log("Auth anon silent fail"));
+            }
+        } catch(e) {}
 
     </script>
 </body>
