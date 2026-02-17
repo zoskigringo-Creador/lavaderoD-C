@@ -12,7 +12,7 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
         
-        /* Animación de burbujas para el fondo */
+        /* Animación de burbujas */
         .bubbles {
             position: absolute;
             width: 100%;
@@ -59,10 +59,10 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Ajustes específicos para móviles */
+        /* Ajustes móviles */
         .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
         
-        /* FIX MOVIL: Asegura que los botones respondan rápido */
+        /* Botones táctiles */
         button, .btn-tipo, .servicio-card, .adicional-card {
             touch-action: manipulation;
             cursor: pointer;
@@ -90,7 +90,7 @@
             <p class="text-lg font-light tracking-[0.2em] uppercase mb-2 opacity-90">David & Celene Baez</p>
             <h2 class="text-2xl font-bold text-cyan-200 mb-12">AUTO SPA & DETAILING</h2>
             
-            <button id="btnEnter" onclick="enterSystem()" ontouchstart="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
+            <button id="btnEnter" onclick="enterSystem()" class="w-full max-w-xs group relative px-8 py-4 bg-white text-blue-900 text-lg font-bold rounded-xl shadow-xl shadow-blue-900/50 hover:shadow-cyan-500/30 hover:scale-[1.02] transition-all duration-300 overflow-hidden active:scale-95">
                 <span id="btnEnterText" class="relative z-10 flex items-center justify-center gap-3">
                     INGRESAR
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@
                     </svg>
                 </span>
             </button>
-            <p id="connectionStatus" class="mt-6 text-xs text-cyan-200 animate-pulse font-mono h-4">Iniciando sistema...</p>
+            <p class="mt-6 text-xs text-cyan-200 opacity-60">Toca para iniciar</p>
         </div>
     </div>
 
@@ -119,16 +119,21 @@
                     </div>
                 </div>
                 
-                <!-- Nav Buttons -->
-                <div class="flex gap-2 bg-blue-950/50 p-1 rounded-lg">
-                    <button onclick="switchView('ingreso')" id="btnIngreso" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        <span class="hidden sm:inline">Ingreso</span>
-                    </button>
-                    <button onclick="switchView('admin')" id="btnAdmin" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        <span class="hidden sm:inline">Auditoría</span>
-                    </button>
+                <!-- Status & Nav -->
+                <div class="flex items-center gap-3">
+                    <!-- Indicador de estado -->
+                    <div id="statusIndicator" class="w-3 h-3 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(255,165,0,0.8)]" title="Conectando..."></div>
+
+                    <div class="flex gap-2 bg-blue-950/50 p-1 rounded-lg">
+                        <button onclick="switchView('ingreso')" id="btnIngreso" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all bg-cyan-500 text-white shadow-lg flex items-center gap-2">
+                            <span class="hidden sm:inline">Ingreso</span>
+                            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                        <button onclick="switchView('admin')" id="btnAdmin" class="px-3 py-2 rounded-md text-xs md:text-sm font-bold transition-all text-blue-300 hover:text-white hover:bg-white/10 flex items-center gap-2">
+                            <span class="hidden sm:inline">Auditoría</span>
+                            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -285,7 +290,6 @@
         // --- DATOS GLOBALES ---
         let currentUser = null;
         let registros = [];
-        let autoEnterRequested = false; // Bandera para entrada automática
         
         let tipoSeleccionado = 'Camioneta';
         let servicioSeleccionado = null;
@@ -312,51 +316,34 @@
 
         // --- INICIALIZACIÓN ---
         window.enterSystem = async () => {
-            const btn = document.getElementById('btnEnter');
-            const btnText = document.getElementById('btnEnterText');
+            // ESTRATEGIA: Entrar INMEDIATAMENTE sin esperar a Firebase
+            // Esto arregla el "bloqueo" en móviles con internet lento
             
-            // Si ya estamos conectados, entrar directo
-            if(currentUser) {
-                performEntryAnimation();
-                return;
-            }
-
-            // Si no, mostrar estado de carga y esperar/reintentar
-            btnText.innerHTML = `
-                <svg class="animate-spin h-5 w-5 text-blue-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>INICIANDO...</span>
-            `;
-            
-            autoEnterRequested = true;
-            
-            // INTENTO FORZADO DE CONEXIÓN si no responde rápido
-            if(!auth.currentUser) {
-                try {
-                    await signInAnonymously(auth);
-                } catch(e) {
-                    console.error("Reintento fallido", e);
-                    // Si falla, el listener no se disparará, así que mostramos error en el botón
-                    btnText.innerHTML = "REINTENTAR";
-                    alert("Error de conexión. Toca de nuevo para reintentar.");
-                }
-            }
-        };
-
-        function performEntryAnimation() {
             const welcome = document.getElementById('welcomeScreen');
+            const app = document.getElementById('appContainer');
+
+            // 1. Animación visual de salida (Instantánea)
             welcome.style.opacity = '0';
-            // Esperar animación y ELIMINAR del DOM para liberar el touch en móvil
+            
+            // 2. Liberar el DOM inmediatamente
             setTimeout(() => {
                 welcome.style.display = 'none'; 
-                document.getElementById('appContainer').classList.remove('hidden-section');
-                setTimeout(() => document.getElementById('appContainer').classList.remove('opacity-0'), 50);
+                app.classList.remove('hidden-section');
+                
+                // Pequeño delay para fade-in suave
+                setTimeout(() => {
+                   app.classList.remove('opacity-0');
+                }, 50);
+
+                // 3. Si no estamos conectados, intentar conectar en segundo plano ahora
+                if(!auth.currentUser) {
+                    initAuth();
+                }
             }, 500);
-        }
+        };
 
         async function initAuth() {
+            updateStatus('connecting');
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -365,9 +352,19 @@
                 }
             } catch (error) {
                 console.error("Auth Error:", error);
-                document.getElementById('connectionStatus').innerText = "Reintentando conexión...";
-                // Reintentar anónimo si falla el token
-                try { await signInAnonymously(auth); } catch(e){}
+                // Reintentar silenciosamente
+                setTimeout(() => initAuth(), 3000);
+            }
+        }
+
+        function updateStatus(status) {
+            const indicator = document.getElementById('statusIndicator');
+            if(status === 'online') {
+                indicator.className = "w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] transition-all duration-500";
+                indicator.title = "En línea";
+            } else {
+                indicator.className = "w-3 h-3 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(255,165,0,0.8)] transition-all duration-500";
+                indicator.title = "Conectando...";
             }
         }
 
@@ -441,6 +438,13 @@
 
         // --- FIREBASE OPERACIONES ---
         window.guardarRegistro = async () => {
+            // Checkeo de seguridad antes de guardar
+            if(!auth.currentUser) {
+                alert("⚠️ Conectando con el servidor... Intenta en 5 segundos.");
+                initAuth(); // Reintentar conectar forzadamente
+                return;
+            }
+
             const chapa = document.getElementById('inputChapa').value.trim();
             if(!chapa) { alert("⚠️ Faltó cargar la CHAPA"); return; }
             if(!servicioSeleccionado) { alert("⚠️ Selecciona un servicio"); return; }
@@ -472,6 +476,8 @@
         };
 
         window.generarDatosPrueba = async () => {
+            if(!auth.currentUser) { alert("Esperando conexión..."); return; }
+            
             const btn = document.getElementById('btnPrueba');
             const originalText = btn.innerHTML;
             btn.innerHTML = '...';
@@ -594,13 +600,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('connectionStatus').innerText = "Sistema Listo";
-                document.getElementById('connectionStatus').classList.remove('animate-pulse');
-                
-                // Si el usuario ya había intentado entrar, hacerlo pasar automáticamente
-                if(autoEnterRequested) {
-                    performEntryAnimation();
-                }
+                updateStatus('online'); // Indicador verde
 
                 // Cargar datos
                 const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registros_lavadero'), orderBy('timestamp', 'desc'));
@@ -612,6 +612,8 @@
                     const totalDia = registros.reduce((acc, curr) => acc + (curr.total || 0), 0);
                     document.getElementById('totalRecaudado').innerText = totalDia.toLocaleString('es-PY') + ' Gs';
                 });
+            } else {
+                updateStatus('connecting'); // Indicador naranja
             }
         });
 
@@ -677,6 +679,7 @@
         }
 
         // Init
+        // Intentar conectar en segundo plano inmediatamente, pero no bloquear la interfaz
         initAuth();
         selectServicio(SERVICIOS[0].id); // Default select
         renderAdicionales();
